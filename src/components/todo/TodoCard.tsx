@@ -1,50 +1,128 @@
-import { useAppDispatch } from "@/redux/hook";
-import { Button } from "../ui/button"
-import { removeTodo, toggleComplete } from "@/redux/features/todoSlice";
+import { motion } from "framer-motion"; // Import motion
+import { Button } from "../ui/button";
+import { useRemoveTodoMutation, useUpdateTodoMutation } from "@/redux/api/api";
+import { Loader } from "lucide-react";
+import UpdateTodoModal from "./UpdateTodoModal";
+import { Input } from "../ui/input";
 
-type TTodoProps = {
-    id: string;
-    title: string;
-    description: string;
-    isCompleted?: boolean;
-    time?: string;
+interface Todo {
+  _id: string;
+  title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  isCompleted: boolean;
+  dateTime: string;
 }
 
-const TodoCard = ({id, title, description, isCompleted, time}: TTodoProps) => {
-    const dispatch = useAppDispatch();
+const TodoCard = ({
+  _id,
+  title,
+  description,
+  isCompleted,
+  dateTime,
+  priority,
+}: Todo) => {
+  // const dispatch = useAppDispatch();
+  const [updateTodo, { isLoading, isError }] = useUpdateTodoMutation();
+  const [removeTodo] = useRemoveTodoMutation();
 
-    const toggleState = () => {
-        dispatch(toggleComplete(id))
-        console.log("clicked");
+  console.log(isCompleted);
+
+  const toggleState = () => {
+    // dispatch(toggleComplete(id));
+    const taskData = {
+      title,
+      description,
+      priority,
+      isCompleted: !isCompleted,
     }
-    return (
-        <div className="bg-white rounded-md flex justify-between items-center p-2 border border-gray-200">
-             <input
-             onChange={toggleState}
-             type="checkbox"
-             id="terms" />
-            <p className="font-semibold">{title}</p>
-            <p>{time}</p>
-            <p>{isCompleted? <p className="text-green-500">Done</p> : <p className="text-red-500">Pending</p>}</p>
-            <p>{description}</p>
-            <div className="space-x-5">
-                <Button
-                onClick={()=> dispatch(removeTodo(id))}
-                size="sm" className="bg-red-500 hover:bg-rose-700 text-white cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
+    const options = {
+      id: _id,
+      data: taskData,
+    }
+    updateTodo(options);
+  };
 
-                </Button>
-                <Button  size="sm" className="bg-blue-500 text-white cursor-pointer ">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                    </svg>
+  const handleRemove = (id: string) => {
+    removeTodo(id);
+  }
 
-                </Button>
-            </div>
+  if (isError) return <div className="text-red-500 text-center font-semibold">An error has occurred!</div>;
+  if (isLoading) return <div className="flex justify-center items-center"><Loader size={48} className="text-indigo-600" /></div>;
+
+  return (
+    <motion.div
+      className="bg-white shadow-md rounded-xl p-6 w-full mx-auto border border-gray-300 space-y-6"
+      initial={{ opacity: 0, y: 20 }} // Initial state (faded and slightly below)
+      animate={{ opacity: 1, y: 0 }} // Final state (fully visible and in place)
+      exit={{ opacity: 0, y: 20 }} // Exit animation (faded and slightly below)
+      transition={{ duration: 0.5 }} // Duration of the animation
+      whileHover={{ scale: 1.05 }} 
+      whileTap={{ scale: 0.98 }} 
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <Input
+            onChange={toggleState}
+            checked={isCompleted}
+            type="checkbox"
+            id="terms"
+            className="w-5 h-5 rounded-full border-gray-300 focus:ring-2 focus:ring-indigo-500"
+          />
+          <p className="text-xl font-semibold text-gray-800">{title}</p>
         </div>
-    )
-}
+        <p className="text-sm text-gray-400">{dateTime}</p>
+      </div>
 
-export default TodoCard
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <div
+            className={`w-3 h-3 rounded-full ${priority === "high"
+                ? "bg-red-500"
+                : priority === "medium"
+                  ? "bg-yellow-500"
+                  : "bg-green-500"
+              }`}
+          ></div>
+          <p className="text-sm text-gray-600 capitalize">{priority}</p>
+        </div>
+        <p className="text-sm text-gray-500">
+          {isCompleted ? (
+            <span className="text-green-500 font-medium">Completed</span>
+          ) : (
+            <span className="text-red-500 font-medium">Pending</span>
+          )}
+        </p>
+      </div>
+
+      <p className="text-gray-700 text-lg">{description}</p>
+
+      <div className="flex justify-center space-x-5 mt-6">
+        <Button
+          onClick={() => handleRemove(_id)}
+          variant="outline"
+          className="flex items-center justify-center  text-red-500 py-2 px-6 rounded-lg shadow-sm  transition-all duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+            />
+          </svg>
+          Remove
+        </Button>
+        <UpdateTodoModal id={_id} title={title} description={description} isCompleted={isCompleted}/>
+      </div>
+    </motion.div>
+  );
+};
+
+export default TodoCard;
