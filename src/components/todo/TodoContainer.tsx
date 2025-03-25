@@ -1,4 +1,3 @@
-import { Loader } from "lucide-react";
 import AddTodoModal from "./AddTodoModal";
 import TodoCard from "./TodoCard";
 import TodoFilter from "./TodoFilter";
@@ -21,7 +20,7 @@ const TodoContainer = () => {
     const { data: todos, isLoading, isError } = useGetTodosQuery(priority);
 
     if (isError) return <div className="text-red-500 text-center font-semibold">Data fetching has occurred!</div>;
-    if (isLoading) return <div className="flex justify-center items-center h-screen"><Loader size={48} className="text-indigo-600" /></div>;
+    // if (isLoading) return <div className="flex justify-center items-center h-screen"><Loader size={48} className="text-indigo-600" /></div>;
 
     return (
         <div className="bg-primary-gradient mx-auto max-w-7xl p-1 space-y-2 rounded-xl">
@@ -47,7 +46,7 @@ const TodoContainer = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {todos?.data?.map((todo: Todo) => (
-                            <TodoCard key={todo._id} {...todo} />
+                            <TodoCard key={todo._id} {...todo} isLoading={isLoading} />
                         ))}
                     </div>
                 )}

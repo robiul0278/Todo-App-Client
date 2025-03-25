@@ -14,7 +14,7 @@ type Inputs = {
     isCompleted?: boolean | undefined;
 };
 
-const UpdateTodoModal = ({id, title, description, isCompleted}: Inputs) => {
+const UpdateTodoModal = ({id, title, description,priority, isCompleted}: Inputs) => {
     const [updateTodo] = useUpdateTodoMutation();
 
 
@@ -65,8 +65,8 @@ const UpdateTodoModal = ({id, title, description, isCompleted}: Inputs) => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add Task</DialogTitle>
-                    <DialogDescription>Add your task that you want to finish!</DialogDescription>
+                    <DialogTitle>Update Task</DialogTitle>
+                    <DialogDescription>Update your task that you want to finish!</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid gap-4 py-4">
@@ -85,6 +85,7 @@ const UpdateTodoModal = ({id, title, description, isCompleted}: Inputs) => {
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Priority</Label>
                             <Controller
+                            defaultValue={priority}
                                 name="priority"
                                 control={control}
                                 rules={{ required: true }}
