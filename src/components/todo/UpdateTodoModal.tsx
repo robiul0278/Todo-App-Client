@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useUpdateTodoMutation } from "@/redux/api/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 type Inputs = {
     id: string;
@@ -69,20 +70,20 @@ const UpdateTodoModal = ({id, title, description,priority, isCompleted}: Inputs)
                     <DialogDescription>Update your task that you want to finish!</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="grid gap-2 py-4">
+                        <div className="space-y-1">
                             <Label htmlFor="task" className="text-right">
                                 Task
                             </Label>
                             <Input defaultValue={title} {...register("title", { required: true })} id="task" className="col-span-3" />
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="space-y-1">
                             <Label htmlFor="description" className="text-right">
                                 Description
                             </Label>
-                            <Input defaultValue={description} {...register("description", { required: true })} id="description" className="col-span-3" />
+                            <Textarea defaultValue={description} {...register("description", { required: true })} id="description" className="col-span-3" />
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="space-y-1">
                             <Label className="text-right">Priority</Label>
                             <Controller
                             defaultValue={priority}

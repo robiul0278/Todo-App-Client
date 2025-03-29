@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useAddTodoMutation } from "@/redux/api/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 type Inputs = {
   title: string;
@@ -56,20 +57,24 @@ const AddTodoModal = () => {
           <DialogDescription>Add your task that you want to finish!</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+          <div className="grid gap-2 py-4">
+            <div className="space-y-1">
               <Label htmlFor="task" className="text-right">
-                Task
+                Title
               </Label>
-              <Input {...register("title", { required: true })} id="task" className="col-span-3" />
+              <Input 
+              placeholder="write title"
+              {...register("title", { required: true })} id="task" className="col-span-3" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="space-y-1">
               <Label htmlFor="description" className="text-right">
                 Description
               </Label>
-              <Input {...register("description", { required: true })} id="description" className="col-span-3" />
+              <Textarea 
+              placeholder="Type your message here."
+              {...register("description", { required: true })} id="description" className="col-span-3" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="space-y-1">
               <Label className="text-right">Priority</Label>
               <Controller
                 name="priority"

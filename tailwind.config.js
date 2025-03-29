@@ -52,7 +52,9 @@ export default {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
-        }
+        },
+        customDark: "#1E1E2E",
+        customLight: "#F8F9FA",
       },
       backgroundImage: {
         'primary-gradient': 'linear-gradient(30deg, #DC02C3, #5C53FE)',
